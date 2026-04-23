@@ -1,17 +1,18 @@
-import AddTodo from './components/add-todo.js';
-import Modal from './components/modal.js';
-import Filters from './components/filters.js';
+import AddTodo from "./components/add-todo.js";
+import Modal from "./components/modal.js";
+import Filters from "./components/filters.js";
 
 export default class View {
   constructor() {
     this.model = null;
-    this.table = document.getElementById('table');
+    this.table = document.getElementById("table");
     this.addTodoForm = new AddTodo();
     this.modal = new Modal();
     this.filters = new Filters();
-    
 
-    this.addTodoForm.onClick((title, description) => this.addTodo(title, description));
+    this.addTodoForm.onClick((title, description) =>
+      this.addTodo(title, description),
+    );
     this.modal.onClick((id, values) => this.editTodo(id, values));
     this.filters.onClick((filters) => this.filter(filters));
   }
@@ -27,31 +28,38 @@ export default class View {
 
   filter(filters) {
     const { type, words } = filters;
-    const [, ...rows] = this.table.getElementsByTagName('tr');
+    const [, ...rows] = this.table.getElementsByTagName("tr");
     for (const row of rows) {
       const [title, description, completed] = row.children;
       let shouldHide = false;
 
       if (words) {
-        shouldHide = !title.innerText.includes(words) && !description.innerText.includes(words);
+        shouldHide =
+          !title.innerText.includes(words) &&
+          !description.innerText.includes(words);
       }
 
-      const shouldBeCompleted = type === 'completed';
+      const shouldBeCompleted = type === "completed";
       const isCompleted = completed.children[0].checked;
 
-      if (type !== 'all' && shouldBeCompleted !== isCompleted) {
+      if (type !== "all" && shouldBeCompleted !== isCompleted) {
         shouldHide = true;
       }
 
       if (shouldHide) {
-        row.classList.add('d-none');
+        row.classList.add("d-none");
       } else {
-        row.classList.remove('d-none');
+        row.classList.remove("d-none");
       }
     }
   }
 
   async addTodo(title, description) {
+    if (!this.model) {
+      console.error("El modelo no ha sido inicializado en la vista");
+      return;
+    }
+
     const todo = await this.model.addTodo(title, description); // await añadido
     this.createRow(todo);
   }
@@ -74,40 +82,39 @@ export default class View {
   }
 
   createRow(todo) {
-    const row = table.insertRow();
-    row.setAttribute('id', todo.id);
+    const row = this.table.insertRow();
+    row.setAttribute("id", todo.id);
     row.innerHTML = `
       <td>${todo.title}</td>
-      <td>${todo.description}</td>
-      <td class="text-center">
-
-      </td>
-      <td class="text-right">
-
-      </td>
+      <td class="d-none d-md-table-cell">${todo.description}</td>
+      <td class="text-center"></td>
+      <td class="text-right"></td>
     `;
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
     checkbox.checked = todo.completed;
     checkbox.onclick = () => this.toggleCompleted(todo.id);
     row.children[2].appendChild(checkbox);
 
-    const editBtn = document.createElement('button');
-    editBtn.classList.add('btn', 'btn-primary', 'mb-1');
+    const editBtn = document.createElement("button");
+    //editBtn.classList.add("btn", "btn-primary", "mb-1");
+    editBtn.classList.add("btn", "btn-outline-info", "btn-sm", "mb-1", "mr-1");
     editBtn.innerHTML = '<i class="fa fa-pencil"></i>';
-    editBtn.setAttribute('data-toggle', 'modal');
-    editBtn.setAttribute('data-target', '#modal');
-    editBtn.onclick = () => this.modal.setValues({
-      id: todo.id,
-      title: row.children[0].innerText,
-      description: row.children[1].innerText,
-      completed: row.children[2].children[0].checked,
-    });
+    editBtn.setAttribute("data-toggle", "modal");
+    editBtn.setAttribute("data-target", "#modal");
+    editBtn.onclick = () =>
+      this.modal.setValues({
+        id: todo.id,
+        title: todo.title,
+        description: todo.description,
+        completed: todo.completed,
+      });
     row.children[3].appendChild(editBtn);
 
-    const removeBtn = document.createElement('button');
-    removeBtn.classList.add('btn', 'btn-danger', 'mb-1', 'ml-1');
+    const removeBtn = document.createElement("button");
+    //removeBtn.classList.add("btn", "btn-danger", "mb-1", "ml-1");
+    removeBtn.classList.add("btn", "btn-outline-danger", "btn-sm", "mb-1");
     removeBtn.innerHTML = '<i class="fa fa-trash"></i>';
     removeBtn.onclick = () => this.removeTodo(todo.id);
     row.children[3].appendChild(removeBtn);

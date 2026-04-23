@@ -1,201 +1,165 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Fontawesome -->
-  <link
-    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    rel="stylesheet"
-  />
-  <!-- Bootswatch Darkly Theme -->
-  <link
-    href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <title>JS Todo List</title>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">JS Todo List</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-            Home <span class="sr-only">(current)</span>
-          </a>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-lg-0" id="filters">
-        <label class="font-weight-bold text-info mr-3">Filters</label>
-        <input type="radio" name="type" value="all" class="mx-1">
-        <label for="male" class="mb-0">All</label>
-        <input type="radio" name="type" value="completed" class="mx-1">
-        <label for="female" class="mb-0">Completed</label>
-        <input type="radio" name="type" value="uncompleted" class="mx-1">
-        <label for="other" class="mr-2 mb-0">Uncompleted</label> 
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fontawesome -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootswatch flatly Theme -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>JS Todo List</title>
+    <style>
+      /* Ajustes para mejorar el contraste y flexbox */
+      .todo-container {
+        max-width: 800px;
+        margin-top: 50px;
+      }
+      .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .d-flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="container">
+        <a class="navbar-brand font-weight-bold" href="#">JS ToDo List</a>
+      </div>
+    </nav>
 
-        <input
-          class="form-control mr-sm-2"
-          type="search"
-          name="words"
-          placeholder="Words"
-          aria-label="Search"
-        >
-        <button class="btn btn-outline-info my-2 my-sm-0" type="submit" id="search">
-          Search
-        </button>
-      </form>
-    </div>
-  </nav>
-
-  <!-- Modal -->
-  <div
-    class="modal fade"
-    id="modal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Edit Todo
-          </h5>
+    <div class="container todo-container shadow-sm p-4 bg-dark rounded">
+      <div class="d-flex-between mb-4 flex-wrap">
+        <h2 class="text-secondary">Mis Tareas</h2>
+        <form id="filters" class="d-flex align-items-center">
+          <input
+            type="text"
+            name="words"
+            id="words"
+            class="form-control form-control-sm mr-2"
+            placeholder="Buscar..."
+          />
           <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
+            id="search"
+            class="btn btn-outline-primary btn-sm"
+            type="submit"
           >
-            <span aria-hidden="true">&times;</span>
+            Filtrar
           </button>
-        </div>
-        <div class="modal-body">
-          <div class="alert alert-danger d-none" role="alert" id="modal-alert">
-            A simple danger alert—check it out!
-          </div>
-          <form>
-            <div class="form-group">
-              <label>Title</label>
-              <input
-                id="modal-title"
-                type="text"
-                class="form-control"
-                placeholder="Do Something"
-              />
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control" id="modal-description" rows="3">
-
-              </textarea>
-            </div>
-            <div class="form-group d-inline-flex">
-              <label>Completed</label>
-              <div class="mt-1 ml-2">
-                <input
-                id="modal-completed"
-                type="checkbox"
-              />
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Close
-          </button>
-          <button type="button" class="btn btn-info" id="modal-btn">
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <main>
-    <div class="container pt-3">
-      <div class="alert alert-danger d-none" role="alert" id="alert">
-        A simple danger alert—check it out!
-      </div>
-
-      <div>
-        <form> 
-          <div class="row">
-            <div class="col-sm-3 d-sm-flex align-items-center">
-              <label class="m-sm-0">Title</label>
-              <input
-                type="text"
-                id="title"
-                class="form-control ml-sm-2"
-                placeholder="Learn JS"
-              >
-            </div>
-            <div class="px-sm-2 col-sm-7 d-sm-flex align-items-center mt-2 mt-sm-0">
-              <label class="m-sm-0">Description</label>
-              <input
-                type="text"
-                id="description"
-                class="form-control ml-sm-2"
-                placeholder="Watch JS Tutorials"
-              >
-            </div>
-            <div class="col-sm-2 d-sm-flex justify-content-end mt-4 mt-sm-0">
-              <button type="button" class="btn btn-info btn-block" id="add">
-                Add
-              </button>
-            </div>
-          </div>
         </form>
       </div>
 
-      <div class="mt-5">
-        <table class="table table-striped" id="table">
-          <thead>
+      <div id="alert" class="alert d-none"></div>
+
+      <div class="jumbotron p-4 border">
+        <div class="row align-items-end" id="add-todo-form">
+          <div class="col-sm-4 mb-2">
+            <label class="font-weight-bold">Título</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control"
+              placeholder="Ej: Estudiar"
+            />
+          </div>
+          <div class="col-sm-6 mb-2">
+            <label class="font-weight-bold">Descripción</label>
+            <input
+              type="text"
+              id="description"
+              class="form-control"
+              placeholder="¿Qué hay que hacer?"
+            />
+          </div>
+          <div class="col-sm-2 mb-2">
+            <button id="add" class="btn btn-success btn-block">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table id="table" class="table table-hover border justify-content-start">
+          <thead class="thead-light">
             <tr>
-              <th scope="col">Todo</th>
-              <th scope="col">Description</th>
-              <th scope="col">
-                <div class="d-flex justify-content-center">
-                  Completed
-                </div>
-              </th>
-              <th scope="col"></th>
+              <th scope="col">Tarea</th>
+              <th scope="col" class="d-none d-md-table-cell">Descripción</th>
+              <th scope="col" class="text-center">Estado</th>
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Content generated with JS -->
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
-  </main>
 
-  <!-- JQuery -->
-  <script
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
-    crossorigin="anonymous"
-  ></script>
-  <!-- Bootstrap -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-  <!-- JS Code -->
-  <script src="js/index.js" type="module"></script>
-</body>
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Editar Tarea</h5>
+            <button type="button" class="close text-white" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="modal-alert" class="alert d-none"></div>
+            <div class="form-group">
+              <label>Título</label>
+              <input id="modal-title" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea
+                id="modal-description"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="modal-completed"
+              />
+              <label class="custom-control-label" for="modal-completed"
+                >Completada</label
+              >
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="button" id="modal-btn" class="btn btn-primary">
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- JS Code -->
+    <script src="js/index.js" type="module"></script>
+  </body>
 </html>
