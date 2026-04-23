@@ -1,0 +1,9 @@
+### IDE's template
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
